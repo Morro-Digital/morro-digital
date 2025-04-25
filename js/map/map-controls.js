@@ -11,6 +11,7 @@ import {
 } from "../navigation/navigation.js";
 import { mapInstance } from "../main.js"; // Importa a instância do mapa
 import { hidePopup, markers } from "../map/uiMap.js"; // Importa a função hidePopup
+import { plotRouteOnMap } from "./osm-service.js";
 
 /* O que esse módulo cobre:
 Inicializa o mapa OpenStreetMap com Leaflet.
@@ -20,8 +21,7 @@ Remove marcadores e rotas anteriores para manter o mapa limpo.
 Adiciona controle de geolocalização para o usuário encontrar sua localização no mapa.
 */
 
-export const apiKey =
-  "5b3ce3597851110001cf62480e27ce5b5dcf4e75a9813468e027d0d3";
+const apiKey = "5b3ce3597851110001cf62480e27ce5b5dcf4e75a9813468e027d0d3";
 
 // Variáveis de controle de mapa e marcadores
 export let userLocation = null;
@@ -34,7 +34,7 @@ export let userLocation = null;
 export function initializeMap(containerId) {
   if (mapInstance) {
     console.warn("[initializeMap] Mapa já inicializado.");
-    return mapInstance; // Retorna a instância existente
+    return mapInstance;
   }
 
   const mapElement = document.getElementById(containerId);
@@ -45,13 +45,13 @@ export function initializeMap(containerId) {
     return null;
   }
 
-  map = L.map(containerId).setView([-13.3815787, -38.9159057], 16); // Zoom inicial 16
+  // Corrija a atribuição usando mapInstance em vez de map
+  mapInstance = L.map(containerId).setView([-13.3815787, -38.9159057], 16);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   }).addTo(mapInstance);
 
-  console.log("[initializeMap] Mapa inicializado com sucesso.");
   return mapInstance;
 }
 
@@ -286,141 +286,4 @@ export async function getCurrentPosition() {
       }
     );
   });
-}
-
-/**
- * plotRouteOnMap
- * Consulta a API OpenRouteService, obtém as coordenadas e plota a rota no mapa.
- */
-async function plotRouteOnMap(
-  startLat,
-  startLon,
-  destLat,
-  destLon,
-  profile = "foot-walking"
-) {
-  const url = "https://api.openrouteservice.org/v2/directions/" + profile;
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: apiKey,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        coordinates: [
-          [startLon, startLat],
-          [destLon, destLat],
-        ],
-        instructions: true,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const coords = data.features[0].geometry.coordinates;
-    const latLngs = coords.map(([lon, lat]) => [lat, lon]);
-
-    // Remove rota anterior se existir
-    if (window.currentRoute) {
-      mapInstance.removeLayer(window.currentRoute);
-    }
-
-    // Adiciona nova rota
-    window.currentRoute = L.polyline(latLngs, {
-      color: "blue",
-      weight: 5,
-    }).addTo(mapInstance);
-
-    // Ajusta visualização
-    mapInstance.fitBounds(window.currentRoute.getBounds(), {
-      padding: [50, 50],
-    });
-
-    console.log("[plotRouteOnMap] Rota plotada com sucesso");
-
-    return {
-      distance: data.features[0].properties.segments[0].distance,
-      duration: data.features[0].properties.segments[0].duration,
-      instructions: data.features[0].properties.segments[0].steps,
-    };
-  } catch (error) {
-    console.warn(
-      "[plotRouteOnMap] Usando rota simplificada devido a erro:",
-      error
-    );
-
-    // Fallback: Criar rota em linha reta
-    return createSimpleRoute(startLat, startLon, destLat, destLon);
-  }
-}
-
-/**
- * Cria uma rota simplificada em linha reta quando a API falha
- */
-function createSimpleRoute(startLat, startLon, destLat, destLon) {
-  // Remove rota anterior
-  if (window.currentRoute) {
-    mapInstance.removeLayer(window.currentRoute);
-  }
-
-  // Cria linha reta entre pontos
-  const latLngs = [
-    [startLat, startLon],
-    [destLat, destLon],
-  ];
-
-  // Adiciona linha pontilhada para indicar rota aproximada
-  window.currentRoute = L.polyline(latLngs, {
-    color: "gray",
-    weight: 3,
-    dashArray: "5,10",
-  }).addTo(mapInstance);
-
-  // Ajusta visualização
-  mapInstance.fitBounds(window.currentRoute.getBounds(), { padding: [50, 50] });
-
-  // Calcula distância aproximada usando fórmula de Haversine
-  const distance = calculateDistance(startLat, startLon, destLat, destLon);
-
-  // Estima duração baseado em velocidade média de caminhada (5 km/h)
-  const duration = (distance / 5) * 3600; // Converte para segundos
-
-  return {
-    distance: distance * 1000, // Converte km para metros
-    duration: duration,
-    instructions: [
-      {
-        text: "Siga em direção ao destino",
-        distance: distance * 1000,
-        duration: duration,
-      },
-    ],
-  };
-}
-
-/**
- * Calcula distância entre dois pontos usando fórmula de Haversine
- */
-function calculateDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371; // Raio da Terra em km
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) *
-      Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}
-
-function toRad(degrees) {
-  return degrees * (Math.PI / 180);
 }
