@@ -1,0 +1,22 @@
+{
+  "welcome_message": "שלום! ברוך הבא למורו דיגיטל.",
+  "ask_first_time": "האם זו הפעם הראשונה שלך במורו דה סאו פאולו?",
+  "input_placeholder": "הקלד כאן...",
+  "send_button": "שלח",
+  "error_loading_data": "שגיאה בטעינת הנתונים. נסה שוב.",
+  "loading_data": "טוען מידע...",
+  "categories_intro": "מה תרצה לחקור היום?",
+  "category_praias": "חופים",
+  "category_restaurantes": "מסעדות",
+  "category_pontos_turisticos": "אטרקציות תיירותיות",
+  "category_festas": "מסיבות",
+  "category_passeios": "סיורים",
+  "category_hospedagens": "מקומות לינה",
+  "showing_results_for": "מציג תוצאות עבור",
+  "no_results_found": "לא נמצאו תוצאות.",
+  "tracar_rota": "צור מסלול",
+  "voltar": "חזור",
+  "mensagem_erro_rotas": "לא ניתן ליצור מסלול כעת.",
+  "mensagem_rota_pronta": "הנה המסלול הטוב ביותר עבורך.",
+  "mensagem_chegada": "הגעת ליעד שלך!"
+}

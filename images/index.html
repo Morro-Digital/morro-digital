@@ -1,0 +1,493 @@
+<<<<<<< HEAD
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morro de São Paulo Digital</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <meta name="description" content="Descrição do site Morro Digital.">
+    <meta name="keywords" content="turismo, morro, digital, viagens, pontos turísticos">
+    <meta name="author" content="Morro Digital">
+    <meta property="og:title" content="Morro Digital">
+    <meta property="og:description" content="Descrição do site Morro Digital.">
+    <meta property="og:image" content="link_da_imagem">
+    <meta property="og:url" content="URL do site">
+</head>
+<body>
+    <div id="blocked-overlay"></div>
+    <div id="map-container">
+        <div id="map"></div>
+
+        <!-- Modal do Assistente -->
+        <div id="assistant-modal" class="modal">
+            <button id="close-assistant-modal" class="close-menu-btn" onclick="hideModal('assistant-modal'), endTutorial(), stopSpeaking()">X</button>
+            <div class="modal-content" id="assistant-modal-text"></div>
+        </div>
+
+<!-- Modal do Carrossel -->
+<div id="carousel-modal" class="carousel-modal">
+    <div class="modal-content">
+        <span id="carousel-modal-close" class="modal-close">&times;</span>
+        <!-- Aqui vai o conteúdo do carrossel, como a estrutura do Swiper -->
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                <!-- Slides do carrossel -->
+            </div>
+            <!-- Adicione botões de navegação do Swiper, se necessário -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+</div>
+
+
+        <div id="welcome-modal" class="welcome-modal">
+            <div class="modal-content">
+                <p id="welcome-message"></p>
+                <h2>BEM-VINDO!</h2>
+                <p>Sua aventura inesquecível e personalizada em Morro de São Paulo começa aqui!</p>
+                <p>Escolha seu idioma:</p>
+                <div id="language-selection">
+                    <button class="lang-btn" data-lang="pt">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Flag_of_Brazil.svg" alt="Bandeira do Brasil" style="width:30px;height:20px;">
+                    </button>
+                    <button class="lang-btn" data-lang="es">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Spain.svg" alt="Bandeira da Espanha" style="width:30px;height:20px;">
+                    </button>
+                    <button class="lang-btn" data-lang="en">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg" alt="Bandeira dos Estados Unidos" style="width:30px;height:20px;">
+                    </button>
+                    <button class="lang-btn" data-lang="he">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Flag_of_Israel.svg" alt="Bandeira de Israel" style="width:30px;height:20px;">
+                    </button>
+                </div>
+            </div>
+        </div>
+        <button id="menu-btn" class="menu-toggle" aria-label="Menu" onclick="toggleMenu()">&#9776;</button>
+        <div id="floating-menu" class="floating-menu hidden">
+            <button class="menu-btn" data-feature="pontos-turisticos" aria-label="Pontos Turísticos"><i class="fas fa-landmark"></i></button>
+            <button class="menu-btn" data-feature="passeios" aria-label="Passeios"><i class="fas fa-walking"></i></button>
+            <button class="menu-btn" data-feature="praias" aria-label="Praias"><i class="fas fa-umbrella-beach"></i></button>
+            <button class="menu-btn" data-feature="festas" aria-label="Festas"><i class="fas fa-glass-cheers"></i></button>
+            <button class="menu-btn" data-feature="restaurantes" aria-label="Restaurantes"><i class="fas fa-utensils"></i></button>
+            <button class="menu-btn" data-feature="pousadas" aria-label="Pousadas"><i class="fas fa-bed"></i></button>
+            <button class="menu-btn" data-feature="lojas" aria-label="Lojas"><i class="fas fa-store"></i></button>
+            <button class="menu-btn" data-feature="emergencias" aria-label="Emergências"><i class="fas fa-ambulance"></i></button>
+            <button class="menu-btn" data-feature="dicas" aria-label="Dicas"><i class="fas fa-lightbulb"></i></button>
+            <button class="menu-btn zoom-in" aria-label="Aumentar Zoom"><i class="fas fa-plus"></i></button>
+            <button class="menu-btn zoom-out" aria-label="Diminuir Zoom"><i class="fas fa-minus"></i></button>
+            <button class="menu-btn" data-feature="pesquisar" aria-label="Pesquisar"><i class="fas fa-search"></i></button>
+            <button class="menu-btn" data-feature="sobre" aria-label="Sobre"><i class="fas fa-info-circle"></i></button>
+            <button class="menu-btn" data-feature="ensino" aria-label="Ensino"><i class="fas fa-chalkboard-teacher"></i></button>
+        </div>
+        <div id="menu" class="menu">
+            <button id="close-side-btn" class="close-side-btn" onclick="closeSideMenu()">X</button>
+            <div id="touristSpots-submenu" class="submenu" data-feature="touristSpots"></div>
+            <div id="tours-submenu" class="submenu" data-feature="tours"></div>
+            <div id="beaches-submenu" class="submenu" data-feature="beaches"></div>
+            <div id="nightlife-submenu" class="submenu" data-feature="nightlife"></div>
+            <div id="restaurants-submenu" class="submenu" data-feature="restaurants"></div>
+            <div id="inns-submenu" class="submenu" data-feature="inns"></div>
+            <div id="shops-submenu" class="submenu" data-feature="shops"></div>
+            <div id="emergencies-submenu" class="submenu" data-feature="emergencies"></div>
+            <div id="tips-submenu" class="submenu" data-feature="tips"></div>
+            <div id="about-submenu" class="submenu" data-feature="about"></div>
+            <div id="education-submenu" class="submenu" data-feature="education"></div>
+        </div>
+        <div class="control-buttons">
+            <button id="tutorial-no-btn" class="control-btn" style="display:none;" onclick="endTutorial(), stopSpeaking()" data-translate="no">Não</button>
+            <button id="tutorial-yes-btn" class="control-btn" style="display:none;" onclick="startTutorial(), hideControlButtons()" data-translate="yes">Sim</button>
+            <button class="control-btn" id="tutorial-next-btn" style="display:none;" onclick="nextTutorialStep()">Próximo</button>
+            <button class="control-btn" id="tutorial-prev-btn" style="display:none;" onclick="previousTutorialStep()">Voltar</button>
+            <button class="control-btn" id="tutorial-end-btn" style="display:none;" onclick="endTutorial()">Encerrar Tutorial</button>
+            <button class="control-btn" id="create-itinerary-btn" style="display: none;" onclick="showQuestionnaireForm()">Criar Roteiro</button>
+            <button class="control-btn" id="create-route-btn" style="display: none;" onclick="destroyCarousel()">Como Chegar</button>
+            <button class="control-btn" id="about-more-btn" style="display: none;">Saiba mais</button>
+            <button class="control-btn" id="buy-ticket-btn" style="display: none;">Comprar Ingresso</button>
+            <button class="control-btn" id="tour-btn" style="display: none;">Reservar Passeio</button>
+            <button class="control-btn" id="reserve-restaurants-btn" style="display: none;">Reservar Mesa</button>
+            <button class="control-btn" id="speak-attendent-btn" style="display: none;">Falar com atendente</button>
+            <button class="control-btn" id="call-btn" style="display: none;">Ligar</button>
+            <button class="control-btn" id="reserve-inns-btn" style="display: none;">Reservar Quarto</button>
+        </div>
+
+        <div id="itinerary-form-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <form id="itinerary-form">
+                    <label for="activity-types">Selecione os tipos de atividades que você gosta:</label>
+                    <select id="activity-types" name="activity-types" multiple>
+                        <option value="praias">Praias</option>
+                        <option value="pontos-turisticos">Pontos Turísticos</option>
+                        <option value="passeios">Passeios</option>
+                        <option value="festas">Festas</option>
+                        <option value="restaurantes">Restaurantes</option>
+                    </select>
+                    <button type="button" id="save-itinerary-btn">Salvar Roteiro</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="info-modal" class="modal">
+            <div class="modal-content">
+                <button id="close-info-modal" class="close-menu-btn" onclick="hideModal('info-modal'), hideControlButtons()">X</button>
+                <div class="modal-title"></div>
+                <div class="modal-content"></div>
+            </div>
+        </div>
+
+        <div id="route-modal" class="leaflet-routing-container" style="display: none;">
+            <button class="close-btn" onclick="hideRouteModal()">X</button>
+            <div id="route-steps"></div>
+        </div>
+
+        <div id="tutorial-overlay">
+            <div id="tutorial-progress-bar"></div>
+            <div class="tutorial-controls"></div>
+        </div>
+    </div>
+
+    <div id="tour-guide-modal" class="modal">
+        <div class="modal-content">
+            <h2 data-translate="tourGuideTitle">Sugestão de Tour Guiado</h2>
+            <p data-translate="tourGuideMessage">Gostaria de iniciar um tour guiado pelos pontos de interesse?</p>
+            <button id="start-tour-btn" class="btn" data-translate="startTour">Iniciar Tour</button>
+            <button class="btn close-btn" data-translate="noThanks">Não, Obrigado</button>
+        </div>
+    </div>
+
+    <div id="satisfaction-survey-modal" class="modal">
+        <div class="modal-content">
+            <h2 data-translate="surveyTitle">Pesquisa de Satisfação</h2>
+            <p data-translate="surveyMessage">Por favor, avalie seu tour:</p>
+            <div class="star-rating">
+                <span class="star" data-value="1">&#9733;</span>
+                <span class="star" data-value="2">&#9733;</span>
+                <span class="star" data-value="3">&#9733;</span>
+                <span class="star" data-value="4">&#9733;</span>
+                <span class="star" data-value="5">&#9733;</span>
+            </div>
+            <button class="btn close-btn" data-translate="submitSurvey">Enviar</button>
+        </div>
+    </div>
+
+    <div id="activity-summary-modal" class="modal">
+        <div class="modal-content">
+            <h2 data-translate="activitySummaryTitle">Resumo das Atividades</h2>
+            <p data-translate="activitySummaryMessage">Gostaria de realizar as atividades do roteiro?</p>
+            <div id="activity-summary"></div>
+            <button class="btn" id="confirm-activities-btn" data-translate="confirmActivities">Confirmar Atividades</button>
+            <button class="btn close-btn" data-translate="noThanks">Não, Obrigado</button>
+        </div>
+    </div>
+
+    <div id="notification-container"></div>
+    <div id="questionnaire-modal" class="modal">
+        <form id="questionnaire-form">
+            <div class="modal-content">
+                <h2>Questionário de Interesses</h2>
+                <div id="question-container">
+                    <label for="interest1">Qual seu interesse principal?</label>
+                    <input type="text" id="interest1" name="interest1" required>
+                    <label for="interest2">Qual seu segundo interesse?</label>
+                    <input type="text" id="interest2" name="interest2" required>
+                </div>
+                <button type="button" onclick="previousQuestion()">Anterior</button>
+                <button type="button" onclick="nextQuestion()">Próximo</button>
+                <button type="submit">Enviar</button>
+            </div>
+        </form>
+    </div>
+    
+    <div id="survey-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="hideModal('survey-modal')">&times;</span>
+            <h2>Pesquisa de Satisfação</h2>
+        </div>
+    </div>
+    
+    <div id="feedback-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="hideModal('feedback-modal')">&times;</span>
+            <h2>Enviar Feedback</h2>
+            <form id="feedback-form">
+                <textarea name="feedback" required></textarea>
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
+    </div>
+    
+    <script src="scripts.js" defer></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+            .then(function(registration) {
+                console.log('Service Worker registered with scope:', registration.scope);
+            }).catch(function(error) {
+                console.log('Service Worker registration failed:', error);
+            });
+        }
+    </script>
+</body>
+</html>
+=======
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morro de São Paulo Digital</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <meta name="description" content="Descrição do site Morro Digital.">
+    <meta name="keywords" content="turismo, morro, digital, viagens, pontos turísticos">
+    <meta name="author" content="Morro Digital">
+    <meta property="og:title" content="Morro Digital">
+    <meta property="og:description" content="Descrição do site Morro Digital.">
+    <meta property="og:image" content="link_da_imagem">
+    <meta property="og:url" content="URL do site">
+</head>
+<body>
+    <div id="blocked-overlay"></div>
+    <div id="map-container">
+        <div id="map"></div>
+
+        <!-- Modal do Assistente -->
+        <div id="assistant-modal" class="modal">
+            <button id="close-assistant-modal" class="close-menu-btn" onclick="hideModal('assistant-modal'), endTutorial(), stopSpeaking()">X</button>
+            <div class="modal-content" id="assistant-modal-text"></div>
+        </div>
+
+<!-- Modal do Carrossel -->
+<div id="carousel-modal" class="carousel-modal">
+    <div class="modal-content">
+        <span id="carousel-modal-close" class="modal-close">&times;</span>
+        <!-- Aqui vai o conteúdo do carrossel, como a estrutura do Swiper -->
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                <!-- Slides do carrossel -->
+            </div>
+            <!-- Adicione botões de navegação do Swiper, se necessário -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+</div>
+
+
+        <div id="welcome-modal" class="welcome-modal">
+            <div class="modal-content">
+                <p id="welcome-message"></p>
+                <h2>BEM-VINDO!</h2>
+                <p>Sua aventura inesquecível e personalizada em Morro de São Paulo começa aqui!</p>
+                <p>Escolha seu idioma:</p>
+                <div id="language-selection">
+                    <button class="lang-btn" data-lang="pt">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Flag_of_Brazil.svg" alt="Bandeira do Brasil" style="width:30px;height:20px;">
+                    </button>
+                    <button class="lang-btn" data-lang="es">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Spain.svg" alt="Bandeira da Espanha" style="width:30px;height:20px;">
+                    </button>
+                    <button class="lang-btn" data-lang="en">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg" alt="Bandeira dos Estados Unidos" style="width:30px;height:20px;">
+                    </button>
+                    <button class="lang-btn" data-lang="he">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Flag_of_Israel.svg" alt="Bandeira de Israel" style="width:30px;height:20px;">
+                    </button>
+                </div>
+            </div>
+        </div>
+        <button id="menu-btn" class="menu-toggle" aria-label="Menu" onclick="toggleMenu()">&#9776;</button>
+        <div id="floating-menu" class="floating-menu hidden">
+            <button class="menu-btn" data-feature="pontos-turisticos" aria-label="Pontos Turísticos"><i class="fas fa-landmark"></i></button>
+            <button class="menu-btn" data-feature="passeios" aria-label="Passeios"><i class="fas fa-walking"></i></button>
+            <button class="menu-btn" data-feature="praias" aria-label="Praias"><i class="fas fa-umbrella-beach"></i></button>
+            <button class="menu-btn" data-feature="festas" aria-label="Festas"><i class="fas fa-glass-cheers"></i></button>
+            <button class="menu-btn" data-feature="restaurantes" aria-label="Restaurantes"><i class="fas fa-utensils"></i></button>
+            <button class="menu-btn" data-feature="pousadas" aria-label="Pousadas"><i class="fas fa-bed"></i></button>
+            <button class="menu-btn" data-feature="lojas" aria-label="Lojas"><i class="fas fa-store"></i></button>
+            <button class="menu-btn" data-feature="emergencias" aria-label="Emergências"><i class="fas fa-ambulance"></i></button>
+            <button class="menu-btn" data-feature="dicas" aria-label="Dicas"><i class="fas fa-lightbulb"></i></button>
+            <button class="menu-btn zoom-in" aria-label="Aumentar Zoom"><i class="fas fa-plus"></i></button>
+            <button class="menu-btn zoom-out" aria-label="Diminuir Zoom"><i class="fas fa-minus"></i></button>
+            <button class="menu-btn" data-feature="pesquisar" aria-label="Pesquisar"><i class="fas fa-search"></i></button>
+            <button class="menu-btn" data-feature="sobre" aria-label="Sobre"><i class="fas fa-info-circle"></i></button>
+            <button class="menu-btn" data-feature="ensino" aria-label="Ensino"><i class="fas fa-chalkboard-teacher"></i></button>
+        </div>
+        <div id="menu" class="menu">
+            <button id="close-side-btn" class="close-side-btn" onclick="closeSideMenu()">X</button>
+            <div id="touristSpots-submenu" class="submenu" data-feature="touristSpots"></div>
+            <div id="tours-submenu" class="submenu" data-feature="tours"></div>
+            <div id="beaches-submenu" class="submenu" data-feature="beaches"></div>
+            <div id="nightlife-submenu" class="submenu" data-feature="nightlife"></div>
+            <div id="restaurants-submenu" class="submenu" data-feature="restaurants"></div>
+            <div id="inns-submenu" class="submenu" data-feature="inns"></div>
+            <div id="shops-submenu" class="submenu" data-feature="shops"></div>
+            <div id="emergencies-submenu" class="submenu" data-feature="emergencies"></div>
+            <div id="tips-submenu" class="submenu" data-feature="tips"></div>
+            <div id="about-submenu" class="submenu" data-feature="about"></div>
+            <div id="education-submenu" class="submenu" data-feature="education"></div>
+        </div>
+        <div class="control-buttons">
+            <button id="tutorial-no-btn" class="control-btn" style="display:none;" onclick="endTutorial(), stopSpeaking()" data-translate="no">Não</button>
+            <button id="tutorial-yes-btn" class="control-btn" style="display:none;" onclick="startTutorial(), hideControlButtons()" data-translate="yes">Sim</button>
+            <button class="control-btn" id="tutorial-next-btn" style="display:none;" onclick="nextTutorialStep()">Próximo</button>
+            <button class="control-btn" id="tutorial-prev-btn" style="display:none;" onclick="previousTutorialStep()">Voltar</button>
+            <button class="control-btn" id="tutorial-end-btn" style="display:none;" onclick="endTutorial()">Encerrar Tutorial</button>
+            <button class="control-btn" id="create-itinerary-btn" style="display: none;" onclick="showQuestionnaireForm()">Criar Roteiro</button>
+            <button class="control-btn" id="create-route-btn" style="display: none;" onclick="destroyCarousel()">Como Chegar</button>
+            <button class="control-btn" id="about-more-btn" style="display: none;">Saiba mais</button>
+            <button class="control-btn" id="buy-ticket-btn" style="display: none;">Comprar Ingresso</button>
+            <button class="control-btn" id="tour-btn" style="display: none;">Reservar Passeio</button>
+            <button class="control-btn" id="reserve-restaurants-btn" style="display: none;">Reservar Mesa</button>
+            <button class="control-btn" id="speak-attendent-btn" style="display: none;">Falar com atendente</button>
+            <button class="control-btn" id="call-btn" style="display: none;">Ligar</button>
+            <button class="control-btn" id="reserve-inns-btn" style="display: none;">Reservar Quarto</button>
+        </div>
+
+        <div id="itinerary-form-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <form id="itinerary-form">
+                    <label for="activity-types">Selecione os tipos de atividades que você gosta:</label>
+                    <select id="activity-types" name="activity-types" multiple>
+                        <option value="praias">Praias</option>
+                        <option value="pontos-turisticos">Pontos Turísticos</option>
+                        <option value="passeios">Passeios</option>
+                        <option value="festas">Festas</option>
+                        <option value="restaurantes">Restaurantes</option>
+                    </select>
+                    <button type="button" id="save-itinerary-btn">Salvar Roteiro</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="info-modal" class="modal">
+            <div class="modal-content">
+                <button id="close-info-modal" class="close-menu-btn" onclick="hideModal('info-modal'), hideControlButtons()">X</button>
+                <div class="modal-title"></div>
+                <div class="modal-content"></div>
+            </div>
+        </div>
+
+        <div id="route-modal" class="leaflet-routing-container" style="display: none;">
+            <button class="close-btn" onclick="hideRouteModal()">X</button>
+            <div id="route-steps"></div>
+        </div>
+
+        <div id="tutorial-overlay">
+            <div id="tutorial-progress-bar"></div>
+            <div class="tutorial-controls"></div>
+        </div>
+    </div>
+
+    <div id="tour-guide-modal" class="modal">
+        <div class="modal-content">
+            <h2 data-translate="tourGuideTitle">Sugestão de Tour Guiado</h2>
+            <p data-translate="tourGuideMessage">Gostaria de iniciar um tour guiado pelos pontos de interesse?</p>
+            <button id="start-tour-btn" class="btn" data-translate="startTour">Iniciar Tour</button>
+            <button class="btn close-btn" data-translate="noThanks">Não, Obrigado</button>
+        </div>
+    </div>
+
+    <div id="satisfaction-survey-modal" class="modal">
+        <div class="modal-content">
+            <h2 data-translate="surveyTitle">Pesquisa de Satisfação</h2>
+            <p data-translate="surveyMessage">Por favor, avalie seu tour:</p>
+            <div class="star-rating">
+                <span class="star" data-value="1">&#9733;</span>
+                <span class="star" data-value="2">&#9733;</span>
+                <span class="star" data-value="3">&#9733;</span>
+                <span class="star" data-value="4">&#9733;</span>
+                <span class="star" data-value="5">&#9733;</span>
+            </div>
+            <button class="btn close-btn" data-translate="submitSurvey">Enviar</button>
+        </div>
+    </div>
+
+    <div id="activity-summary-modal" class="modal">
+        <div class="modal-content">
+            <h2 data-translate="activitySummaryTitle">Resumo das Atividades</h2>
+            <p data-translate="activitySummaryMessage">Gostaria de realizar as atividades do roteiro?</p>
+            <div id="activity-summary"></div>
+            <button class="btn" id="confirm-activities-btn" data-translate="confirmActivities">Confirmar Atividades</button>
+            <button class="btn close-btn" data-translate="noThanks">Não, Obrigado</button>
+        </div>
+    </div>
+
+    <div id="notification-container"></div>
+    <div id="questionnaire-modal" class="modal">
+        <form id="questionnaire-form">
+            <div class="modal-content">
+                <h2>Questionário de Interesses</h2>
+                <div id="question-container">
+                    <label for="interest1">Qual seu interesse principal?</label>
+                    <input type="text" id="interest1" name="interest1" required>
+                    <label for="interest2">Qual seu segundo interesse?</label>
+                    <input type="text" id="interest2" name="interest2" required>
+                </div>
+                <button type="button" onclick="previousQuestion()">Anterior</button>
+                <button type="button" onclick="nextQuestion()">Próximo</button>
+                <button type="submit">Enviar</button>
+            </div>
+        </form>
+    </div>
+    
+    <div id="survey-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="hideModal('survey-modal')">&times;</span>
+            <h2>Pesquisa de Satisfação</h2>
+        </div>
+    </div>
+    
+    <div id="feedback-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="hideModal('feedback-modal')">&times;</span>
+            <h2>Enviar Feedback</h2>
+            <form id="feedback-form">
+                <textarea name="feedback" required></textarea>
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
+    </div>
+    
+    <script src="scripts.js" defer></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+            .then(function(registration) {
+                console.log('Service Worker registered with scope:', registration.scope);
+            }).catch(function(error) {
+                console.log('Service Worker registration failed:', error);
+            });
+        }
+    </script>
+</body>
+</html>
+>>>>>>> 3042ef7feaa3fb8bf5361238a6a3dcf175d9c2a1

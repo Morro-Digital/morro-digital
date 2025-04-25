@@ -1,0 +1,1094 @@
+/* Reset básico e variáveis */
+:root {
+  --primary: #3b82f6;
+  --primary-dark: #2563eb;
+  --accent: #10b981;
+  --accent-dark: #059669;
+  --light: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-800: #1f2937;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --radius-sm: 0.25rem;
+  --radius: 0.5rem;
+  --radius-lg: 0.75rem;
+  --font-sans: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --header-height: 60px;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("./fonts/poppins-regular.woff2") format("woff2"),
+    url("./fonts/poppins-regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: "Poppins", sans-serif;
+  background-color: var(--light);
+  color: var (--gray-800);
+  line-height: 1.6;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* App Shell */
+.app-shell {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Loading Overlay */
+#loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--primary);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+}
+
+#loading-overlay.fade-out {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loading-content {
+  text-align: center;
+  color: white;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 16px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Container fixo para o mapa */
+#map-section {
+  position: relative; /* Mantém o mapa posicionado corretamente */
+  width: 100%; /* Ocupa toda a largura disponível */
+  height: 100%; /* Ocupa toda a altura disponível */
+  max-width: 1000px; /* Define uma largura máxima fixa */
+  max-height: 800px; /* Define uma altura máxima fixa */
+  margin: 0 auto; /* Centraliza o mapa horizontalmente */
+  overflow: hidden; /* Garante que o conteúdo não ultrapasse o container */
+  border: 1px solid var(--gray-300); /* Adiciona uma borda para delimitar o mapa */
+  box-shadow: var(--shadow); /* Adiciona uma sombra para destacar o mapa */
+  z-index: 1;
+}
+
+/* Elemento interno do mapa */
+#map {
+  width: 100%; /* O mapa ocupa toda a largura do container */
+  height: 100%; /* O mapa ocupa toda a altura do container */
+  border: none; /* Remove bordas adicionais */
+  overflow: hidden; /* Garante que o conteúdo do mapa não ultrapasse o container */
+  z-index: 1;
+}
+
+/* Header com design moderno */
+header {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 15%;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  padding: 1.75rem 4.5rem;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+}
+
+.header-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.tagline {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Quick Action Buttons */
+.quick-actions {
+  position: absolute;
+  bottom: 50px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  padding: 0 0rem;
+  z-index: 10;
+  border-radius: var(--radius-lg);
+}
+
+/* Botões dinâmicos e responsivos */
+.action-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.8); /* Fundo semi-transparente */
+  border: none;
+  border-radius: 50%;
+  width: 15vw; /* Adapta ao tamanho da tela */
+  height: 15vw; /* Adapta ao tamanho da tela */
+  max-width: 64px; /* Limite máximo */
+  max-height: 64px; /* Limite máximo */
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: var(--transition);
+  padding: 0;
+  color: var(--gray-800);
+  position: relative;
+}
+
+.action-button i {
+  font-size: 1.25rem;
+}
+
+.action-button span {
+  position: absolute;
+  bottom: -20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgb(20, 20, 20);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.action-button.primary {
+  background-color: var(--primary);
+  color: white;
+  width: 18vw; /* Adapta ao tamanho da tela */
+  height: 18vw; /* Adapta ao tamanho da tela */
+  max-width: 72px; /* Limite máximo */
+  max-height: 72px; /* Limite máximo */
+  margin-top: -10px;
+}
+
+.action-button.primary:hover {
+  background-color: var(--primary-dark);
+}
+
+/* Assistente Virtual flutuante com design moderno */
+#assistant-wrapper {
+  position: absolute;
+  bottom: 150%;
+  left: 5%;
+  width: 90%;
+  background: white;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  box-shadow: var(--shadow-lg);
+  z-index: 20;
+  overflow: hidden;
+  transition: var(--transition);
+  transform: translateY(0);
+}
+
+#assistant-wrapper.hidden {
+  transform: translateY(100%);
+}
+
+.assistant-handle {
+  width: 100%;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 0;
+  cursor: grab;
+}
+
+.handle-bar {
+  width: 40px;
+  height: 4px;
+  background-color: var(--gray-300);
+  border-radius: 4px;
+}
+
+.assistant {
+  padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+}
+
+#assistant-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+#assistant-header h3 {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.minimize-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--gray-800);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.minimize-button:hover {
+  background-color: var(--gray-100);
+}
+
+#assistant-messages {
+  max-height: 90px;
+  overflow-y: auto;
+  padding: 0.5rem;
+  background-color: var(--gray-100);
+  border-radius: var(--radius);
+  margin-bottom: 0.75rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-300) var(--gray-100);
+}
+
+#assistant-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+#assistant-messages::-webkit-scrollbar-track {
+  background: var(--gray-100);
+}
+
+#assistant-messages::-webkit-scrollbar-thumb {
+  background-color: var(--gray-300);
+  border-radius: 20px;
+}
+
+.message {
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: var(--radius);
+  position: relative;
+  max-width: 85%;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message.user {
+  background-color: var(--primary);
+  color: white;
+  margin-left: auto;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 var(--radius-lg);
+}
+
+.message.assistant {
+  background-color: white;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) 0;
+}
+
+#assistant-input-area {
+  display: flex;
+  gap: 0.5rem;
+}
+
+#assistantInput {
+  flex: 1;
+  padding: 0.75rem 0.3rem;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+#assistantInput:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+#sendButton {
+  background-color: var(--primary);
+  color: white;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  box-shadow: var(--shadow);
+}
+
+#sendButton:hover {
+  background-color: var(--primary-dark);
+  transform: scale(1.05);
+}
+
+#sendButton i {
+  font-size: 1rem;
+}
+
+/* Botão de microfone para enviar mensagem de voz */
+#voiceButton {
+  background-color: var(--primary);
+  color: white;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  box-shadow: var(--shadow);
+}
+
+#voiceButton:hover {
+  background-color: var(--primary-dark);
+  transform: scale(1.05);
+}
+
+#voiceButton i {
+  font-size: 1rem;
+}
+
+/* Botão de microfone ativo */
+#voiceButton.active {
+  background-color: var(--accent);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Botões dinâmicos flutuantes */
+#controls {
+  position: absolute;
+  top: calc(var(--header-height) + 8px);
+  left: 0;
+  width: 100%;
+  padding: 0 1rem;
+  z-index: 10;
+}
+
+#buttonGroup {
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+#buttonGroup::-webkit-scrollbar {
+  display: none;
+}
+
+.control-button {
+  padding: 0.5rem 1rem;
+  background-color: rgba(255, 255, 255, 0.2); /* Fundo quase transparente */
+  backdrop-filter: blur(10px); /* Efeito de vidro fosco */
+  color: var(--gray-800);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  white-space: nowrap;
+  transition: var(--transition);
+}
+
+.control-button:hover {
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.4
+  ); /* Fundo mais visível ao passar o mouse */
+  box-shadow: var(--shadow-lg);
+}
+
+.control-button.active {
+  background-color: var(--accent);
+  color: white;
+}
+
+/* Submenu flutuante com design moderno */
+#submenu {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 400px;
+  max-height: 30%;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.2); /* Fundo quase transparente */
+  backdrop-filter: blur(10px); /* Efeito de vidro fosco */
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 15;
+  overflow: hidden;
+}
+
+.submenu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.submenu-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var (--gray-800);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.close-button:hover {
+  background-color: var(--gray-100);
+}
+
+#submenuContainer {
+  padding: 0.5rem 1rem 1rem;
+  overflow-y: auto;
+  max-height: calc(70vh - 56px);
+  background: rgba(255, 255, 255, 0.2); /* Fundo quase transparente */
+  backdrop-filter: blur(10px); /* Efeito de vidro fosco */
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  scrollbar-width: thin; /* Para navegadores compatíveis com scrollbar-width */
+  scrollbar-color: rgba(0, 0, 0, 0.4) transparent; /* Cor da barra e do fundo */
+}
+
+#submenuContainer::-webkit-scrollbar {
+  width: 8px; /* Largura da barra de rolagem */
+}
+
+#submenuContainer::-webkit-scrollbar-track {
+  background: transparent; /* Fundo da barra de rolagem */
+}
+
+#submenuContainer::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.4); /* Cor da barra de rolagem */
+  border-radius: 4px; /* Bordas arredondadas */
+}
+
+#submenuContainer::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.6); /* Cor ao passar o mouse */
+}
+
+#submenuContainer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.submenu-item {
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.2); /* Fundo quase transparente */
+  backdrop-filter: blur(10px); /* Efeito de vidro fosco */
+  margin-bottom: 0.75rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.submenu-item:hover {
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.4
+  ); /* Fundo mais visível ao passar o mouse */
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.submenu-item-icon {
+  margin-right: 0.75rem;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(59, 130, 246, 0.1);
+  color: var(--primary);
+  border-radius: 50%;
+}
+
+.submenu-item-content {
+  flex: 1;
+}
+
+.submenu-item-title {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.submenu-item-description {
+  font-size: 0.8125rem;
+  color: #64748b;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Animações extras */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 1.25rem;
+  }
+
+  .tagline {
+    font-size: 0.75rem;
+  }
+
+  .action-button {
+    width: 18vw; /* Adapta ao tamanho da tela */
+    height: 18vw; /* Adapta ao tamanho da tela */
+    max-width: 56px; /* Limite máximo */
+    max-height: 56px; /* Limite máximo */
+  }
+
+  .action-button.primary {
+    width: 20vw; /* Adapta ao tamanho da tela */
+    height: 20vw; /* Adapta ao tamanho da tela */
+    max-width: 64px; /* Limite máximo */
+    max-height: 64px; /* Limite máximo */
+  }
+
+  .route-summary {
+    bottom: 5%; /* Ajusta a posição para telas menores */
+    width: 95%; /* Adapta ao tamanho da tela */
+  }
+
+  .route-button {
+    font-size: 0.875rem; /* Ajusta o tamanho da fonte */
+    padding: 8px 4%; /* Ajusta o espaçamento interno */
+  }
+
+  #assistant-wrapper {
+    max-width: 100%; /* Ocupa toda a largura da tela */
+    border-radius: 0; /* Remove bordas arredondadas */
+  }
+
+  header h1 {
+    font-size: 1.25rem;
+  }
+
+  .tagline {
+    font-size: 0.75rem;
+  }
+
+  .action-button {
+    width: 48px;
+    height: 48px;
+  }
+
+  .action-button.primary {
+    width: 56px;
+    height: 56px;
+  }
+
+  .action-button i {
+    font-size: 1.125rem;
+  }
+
+  .action-button span {
+    font-size: 0.6875rem;
+  }
+}
+
+@media (min-width: 769px) {
+  #assistant-wrapper {
+    max-width: 500px;
+    right: 20px;
+    left: auto;
+    border-radius: var(--radius-lg);
+    bottom: 20px;
+    max-height: 80%;
+    transform: translateY(0);
+  }
+
+  #assistant-wrapper.hidden {
+    transform: translateY(calc(100% + 20px));
+  }
+
+  header {
+    background: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.7) 0%,
+      rgba(0, 0, 0, 0.4) 50%,
+      rgba(0, 0, 0, 0) 100%
+    );
+    padding: 1rem 2rem;
+  }
+
+  header h1 {
+    font-size: 1.75rem;
+  }
+
+  .tagline {
+    font-size: 1rem;
+  }
+
+  .quick-actions {
+    flex-direction: column;
+    left: auto;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    bottom: auto;
+    width: auto;
+    height: auto;
+    gap: 10px;
+  }
+
+  .action-button span {
+    position: static;
+    margin-top: 4px;
+    color: var(--gray-800);
+    text-shadow: none;
+  }
+}
+
+/* Customize Leaflet map */
+.leaflet-control-zoom {
+  margin: 10px !important;
+  border-radius: var(--radius) !important;
+  overflow: hidden !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.leaflet-control-zoom a {
+  background-color: white !important;
+  color: var(--gray-800) !important;
+  transition: var(--transition) !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background-color: var(--gray-100) !important;
+  color: var(--primary) !important;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.leaflet-popup-tip {
+  box-shadow: var(--shadow) !important;
+}
+
+/* Estilo para o marcador de localização do usuário */
+.custom-user-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* Estilo para o popup personalizado */
+.custom-popup {
+  max-width: 300px; /* Aumente o tamanho máximo do popup */
+  padding: 1rem; /* Adicione mais espaçamento interno */
+  font-size: 1rem; /* Aumente o tamanho da fonte */
+  line-height: 1.5; /* Melhore o espaçamento entre linhas */
+}
+
+.custom-popup h3 {
+  font-size: 1.25rem; /* Aumente o tamanho do título */
+  margin-bottom: 0.5rem; /* Adicione espaçamento abaixo do título */
+}
+
+.custom-popup p {
+  font-size: 1rem; /* Ajuste o tamanho do texto */
+  margin-bottom: 1rem; /* Adicione espaçamento abaixo do texto */
+}
+
+.popup-buttons {
+  display: flex;
+  gap: 0.5rem; /* Espaçamento entre os botões */
+  justify-content: space-between; /* Distribua os botões uniformemente */
+}
+
+.popup-button {
+  flex: 1; /* Faça os botões ocuparem o mesmo espaço */
+  padding: 0.75rem; /* Aumente o espaçamento interno dos botões */
+  font-size: 0.9rem; /* Ajuste o tamanho da fonte dos botões */
+  border: none;
+  border-radius: var(--radius-sm); /* Bordas arredondadas */
+  background-color: var(--primary); /* Cor de fundo */
+  color: white; /* Cor do texto */
+  cursor: pointer;
+  transition: var(--transition); /* Adicione transição para hover */
+}
+
+.popup-button:hover {
+  background-color: var(--primary-dark); /* Cor de fundo ao passar o mouse */
+}
+
+igital-test\css\styles.css */ .carousel-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.carousel-modal .modal-content {
+  position: relative;
+  width: 90%;
+  max-width: 600px;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.carousel-modal .modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #333;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Estilo base para o modal do carrossel */
+.carousel-modal {
+  display: none;
+  position: fixed;
+  z-index: 1050;
+  left: 50%;
+  top: 25%;
+  width: 100%;
+  height: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 0px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Classe para mover o modal 30px à esquerda */
+.carousel-modal.shift-left {
+  transform: translate(-calc(50% + 30px), -50%);
+}
+
+/* Conteúdo do modal do carrossel */
+.carousel-modal .modal-content {
+  position: relative;
+  background-color: #fff;
+  margin: auto;
+  padding: 0;
+  border: none;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+/* Botão de fechar o modal do carrossel */
+.carousel-modal .modal-close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.carousel-modal .modal-close:hover,
+.carousel-modal .modal-close:focus {
+  color: #000;
+  background: #fff;
+}
+
+/* Estilo base para o carrossel */
+.swiper-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Garante que a imagem ocupe todo o espaço do modal */
+}
+
+/* Route Summary */
+.route-summary {
+  position: fixed;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  text-align: center;
+  width: 90%; /* Adapta ao tamanho da tela */
+  max-width: 400px; /* Limite máximo */
+}
+
+.route-summary h3 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+.route-summary p {
+  margin: 0 0 15px;
+  font-size: 0.875rem;
+  color: #555;
+}
+
+.route-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap; /* Permite que os botões se ajustem em telas menores */
+}
+
+/* Botões de navegação */
+.route-button {
+  flex: 1;
+  padding: 10px 5%;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  text-align: center;
+  transition: var(--transition);
+}
+
+.route-button#start-navigation {
+  background: var(--primary);
+  color: white;
+}
+
+.route-button#cancel-navigation {
+  background: var(--accent);
+  color: white;
+}
+
+.route-button:hover {
+  opacity: 0.9;
+}
+
+#instruction-banner {
+  position: fixed;
+  top: 1px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  border: 0px solid #10b981;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  max-width: 100%;
+  min-width: 100%;
+  font-family: "Poppins", sans-serif;
+  transition: all 0.3s ease-in-out;
+}
+
+#instruction-banner.hidden {
+  display: none;
+}
+
+/* Parte azul (título + ícone) */
+.instruction-primary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #3b82f6; /* azul */
+  color: #ffffff;
+  padding: 12px 18px;
+}
+
+#instruction-arrow {
+  font-size: 26px;
+  color: #10b981; /* verde */
+}
+
+#instruction-main {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Parte branca (detalhes + extras) */
+.instruction-secondary {
+  background-color: #ffffff;
+  padding: 12px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#instruction-details {
+  font-size: 14px;
+  color: #374151; /* gray-700 */
+}
+
+.instruction-extra {
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: #6b7280; /* gray-500 */
+  gap: 12px;
+}

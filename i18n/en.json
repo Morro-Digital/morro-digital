@@ -1,0 +1,22 @@
+{
+  "welcome_message": "Hello! Welcome to Morro Digital.",
+  "ask_first_time": "Is this your first time in Morro de São Paulo?",
+  "input_placeholder": "Type here...",
+  "send_button": "Send",
+  "error_loading_data": "Error loading data. Please try again.",
+  "loading_data": "Loading information...",
+  "categories_intro": "What would you like to explore today?",
+  "category_praias": "Beaches",
+  "category_restaurantes": "Restaurants",
+  "category_pontos_turisticos": "Tourist Spots",
+  "category_festas": "Parties",
+  "category_passeios": "Tours",
+  "category_hospedagens": "Accommodations",
+  "showing_results_for": "Showing results for",
+  "no_results_found": "No results found.",
+  "tracar_rota": "Create Route",
+  "voltar": "Back",
+  "mensagem_erro_rotas": "Unable to create the route at this time.",
+  "mensagem_rota_pronta": "Here's the best route for you.",
+  "mensagem_chegada": "You have arrived at your destination!"
+}

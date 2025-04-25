@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#3b82f6" />
+    <meta
+      name="description"
+      content="Guia digital interativo de Morro de São Paulo"
+    />
+    <title>Morro Digital</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper/swiper-bundle.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css"
+    />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <!-- App Shell -->
+    <div class="app-shell">
+      <!-- Cabeçalho -->
+      <header>
+        <div class="header-content">
+          <h1 data-i18n="welcome_message">Morro Digital</h1>
+          <p class="tagline" data-i18n="ask_first_time">Descubra o paraíso</p>
+        </div>
+      </header>
+
+      <!-- Mapa -->
+      <section id="map-section">
+        <div id="map" aria-label="Mapa de Morro de São Paulo"></div>
+      </section>
+
+      <!-- Submenu dinâmico -->
+      <section id="submenu" class="hidden">
+        <div class="submenu-header">
+          <h3 class="submenu-title">Explorar Locais</h3>
+          <button class="close-button" aria-label="Fechar menu">×</button>
+        </div>
+        <div id="submenuContainer" aria-live="polite"></div>
+      </section>
+
+      <!-- Quick Action Buttons -->
+      <div class="quick-actions">
+        <button id="btn-attractions" class="action-button" aria-label="Ver atrações">
+          <i class="fas fa-mountain"></i>
+          <span>Atrações</span>
+        </button>
+      
+        <button id="btn-tours" class="action-button" aria-label="Ver passeios">
+          <i class="fas fa-map-signs"></i>
+          <span>Passeios</span>
+        </button>
+      
+        <button id="btn-nightlife" class="action-button" aria-label="Vida Noturna">
+          <i class="fas fa-music"></i>
+          <span>Festas</span>
+        </button>
+      
+        <button id="btn-beaches" class="action-button" aria-label="Ver praias">
+          <i class="fas fa-umbrella-beach"></i>
+          <span>Praias</span>
+        </button>
+        <button class="action-button primary" aria-label="Abrir assistente">
+          <i class="fas fa-robot"></i>
+          <span>Ajuda</span>
+        </button>
+        <button id="btn-restaurants" class="action-button" aria-label="Ver restaurantes">
+          <i class="fas fa-utensils"></i>
+          <span>Comer</span>
+        </button>
+      
+        <button id="btn-inns" class="action-button" aria-label="Ver pousadas">
+          <i class="fas fa-bed"></i>
+          <span>Dormir</span>
+        </button>
+      
+        <button id="btn-shops" class="action-button" aria-label="Ver lojas">
+          <i class="fas fa-shopping-bag"></i>
+          <span>Lojas</span>
+        </button>
+      
+        <button id="btn-emergencies" class="action-button" aria-label="Ver emergências">
+          <i class="fas fa-ambulance"></i>
+          <span>Emergências</span>
+        </button>
+
+      <!-- Assistente Virtual -->
+      <section id="assistant-wrapper" class="hidden">
+        <div class="assistant-handle">
+          <div class="handle-bar"></div>
+        </div>
+        <div id="digital-assistant" class="assistant">
+          <div id="assistant-header">
+            <h3>Assistente Digital</h3>
+            <button class="minimize-button" aria-label="Minimizar assistente">
+              x
+            </button>
+          </div>
+          <div id="assistant-messages"></div>
+          <div id="assistant-input-area">
+            <input
+              type="text"
+              id="assistantInput"
+              placeholder="Pergunte algo sobre Morro de São Paulo..."
+              aria-label="Campo de entrada do assistente"
+            />
+            <button id="sendButton" aria-label="Enviar mensagem">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+            <!-- Botão de microfone para enviar mensagem de voz -->
+            <button id="voiceButton" aria-label="Enviar mensagem de voz">
+              <i class="fas fa-microphone"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Carousel Modal -->
+    <div id="carousel-modal" class="carousel-modal hidden">
+      <div class="modal-content">
+        <span id="carousel-modal-close" onclick="closeCarouselModal()" class="modal-close" data-i18n="close_modal_carousel">X</span>
+        <!-- Swiper container -->
+        <div class="swiper-container">
+          <div class="swiper-wrapper">
+            <!-- Slides serão adicionados dinamicamente -->
+          </div>
+          <div class="swiper-button-next"></div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-pagination"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="instruction-banner" class="instruction-banner hidden">
+      <!-- Bloco principal com fundo azul -->
+      <div class="instruction-primary">
+        <span id="instruction-arrow">⬅️</span>
+        <h2 id="instruction-main">Siga em frente</h2>
+      </div>
+    
+      <!-- Bloco secundário com fundo branco -->
+      <div class="instruction-secondary">
+        <p id="instruction-details">200m - Rua Caminho do Farol</p>
+        <div class="instruction-extra">
+          <p id="instruction-distance">Distância restante: 200m</p>
+          <p id="instruction-duration">Tempo estimado: 2 minutos</p>
+        </div>
+      </div>
+    </div>
+    
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+      <div class="loading-content">
+        <div class="spinner"></div>
+        <p>Carregando Morro Digital...</p>
+      </div>
+    </div>
+
+    <!-- Scripts principais -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script type="module" src="./js/main.js"></script>
+    <script>
+      // Remove loading overlay when content loads
+      window.addEventListener("load", function () {
+        setTimeout(function () {
+          document.getElementById("loading-overlay").classList.add("fade-out");
+        }, 800);
+      });
+    </script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+  </body>
+</html>

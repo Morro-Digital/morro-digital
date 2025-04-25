@@ -1,0 +1,22 @@
+{
+  "welcome_message": "Olá! Seja bem-vindo ao Morro Digital.",
+  "ask_first_time": "Aqui você encontra as melhores experiências disponíveis para se viver em Morro de São Paulo!",
+  "input_placeholder": "Digite aqui...",
+  "send_button": "Enviar",
+  "error_loading_data": "Erro ao carregar dados. Tente novamente.",
+  "loading_data": "Carregando informações...",
+  "categories_intro": "O que você gostaria de explorar hoje?",
+  "category_praias": "Praias",
+  "category_restaurantes": "Restaurantes",
+  "category_pontos_turisticos": "Pontos Turísticos",
+  "category_festas": "Festas",
+  "category_passeios": "Passeios",
+  "category_hospedagens": "Hospedagens",
+  "showing_results_for": "Mostrando resultados para",
+  "no_results_found": "Nenhum resultado encontrado.",
+  "tracar_rota": "Traçar Rota",
+  "voltar": "Voltar",
+  "mensagem_erro_rotas": "Não foi possível traçar a rota no momento.",
+  "mensagem_rota_pronta": "Aqui está a melhor rota para você.",
+  "mensagem_chegada": "Você chegou ao destino!"
+}
