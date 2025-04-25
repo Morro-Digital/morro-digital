@@ -229,7 +229,7 @@ function initApp() {
   });
 
   setupUIElements();
-  initAnalytics();
+  // initAnalytics();
   initPerformanceOptimizations();
 }
 

@@ -1,3 +1,5 @@
+import { ANALYTICS_CONFIG } from "./config.js";
+
 // analytics.js - Monitoramento anônimo de uso para melhorias
 
 let analyticsEnabled = false;
@@ -58,26 +60,120 @@ function enableAnalytics() {
   window.trackEvent = function (category, action, label) {
     if (!analyticsEnabled) return;
 
-    // Aqui você pode integrar com Google Analytics, Matomo, etc.
-    console.log(`[Analytics] ${category}: ${action} - ${label}`);
+    try {
+      // Log local do evento
+      console.log(`[Analytics] ${category}: ${action} - ${label}`);
 
-    // Exemplo de envio para sua API
-    fetch("/api/track", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+      const payload = {
         category,
         action,
         label,
         timestamp: new Date().toISOString(),
         session: getSessionId(),
-      }),
-      keepalive: true,
-    }).catch((e) => console.error("Erro ao enviar analytics", e));
+        url: window.location.pathname,
+        userAgent: navigator.userAgent,
+      };
+
+      // Validate payload before sending
+      validatePayload(payload);
+
+      // Store event locally first
+      const storedEvents = JSON.parse(
+        localStorage.getItem("pending_analytics") || "[]"
+      );
+      storedEvents.push(payload);
+
+      // Try to send to API
+      sendAnalyticsData(payload).catch((error) => {
+        logAnalyticsError("Failed to send analytics", error);
+        localStorage.setItem("pending_analytics", JSON.stringify(storedEvents));
+      });
+    } catch (error) {
+      logAnalyticsError("Error in trackEvent", error);
+    }
   };
 
   // Registra visualização de página
   trackEvent("app", "pageview", window.location.pathname);
+
+  // Tenta reenviar eventos pendentes
+  retryPendingEvents();
+}
+
+/**
+ * Envia dados para a API de analytics com retry
+ */
+async function sendAnalyticsData(
+  payload,
+  retries = ANALYTICS_CONFIG.RETRY_ATTEMPTS
+) {
+  const API_URL =
+    window.location.hostname === "localhost"
+      ? ANALYTICS_CONFIG.API_URL.development
+      : ANALYTICS_CONFIG.API_URL.production;
+
+  for (let i = 0; i < retries; i++) {
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Client-Version": ANALYTICS_CONFIG.VERSION,
+        },
+        body: JSON.stringify(payload),
+        keepalive: true,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Analytics API error: ${response.status}`);
+      }
+
+      return true;
+    } catch (error) {
+      console.warn(`[Analytics] Tentativa ${i + 1}/${retries} falhou:`, error);
+
+      // On last retry, throw error
+      if (i === retries - 1) throw error;
+
+      // Wait with exponential backoff
+      await new Promise((resolve) =>
+        setTimeout(resolve, ANALYTICS_CONFIG.RETRY_DELAY * Math.pow(2, i))
+      );
+    }
+  }
+}
+
+/**
+ * Tenta reenviar eventos pendentes
+ */
+async function retryPendingEvents() {
+  const pendingEvents = JSON.parse(
+    localStorage.getItem("pending_analytics") || "[]"
+  );
+  if (pendingEvents.length === 0) return;
+
+  console.log(
+    `[Analytics] Tentando reenviar ${pendingEvents.length} eventos pendentes`
+  );
+
+  const successfulEvents = [];
+
+  for (const event of pendingEvents) {
+    try {
+      await sendAnalyticsData(event);
+      successfulEvents.push(event);
+    } catch (error) {
+      console.error("[Analytics] Falha ao reenviar evento:", error);
+      break;
+    }
+  }
+
+  // Remove eventos enviados com sucesso
+  const remainingEvents = pendingEvents.filter(
+    (event) => !successfulEvents.includes(event)
+  );
+
+  localStorage.setItem("pending_analytics", JSON.stringify(remainingEvents));
 }
 
 /**
@@ -90,4 +186,25 @@ function getSessionId() {
     sessionStorage.setItem("session_id", sessionId);
   }
   return sessionId;
+}
+
+/**
+ * Logs analytics errors with proper formatting
+ */
+function logAnalyticsError(message, error) {
+  console.error(`[Analytics Error] ${message}`, error?.message || error);
+}
+
+/**
+ * Validates analytics payload
+ */
+function validatePayload(payload) {
+  const required = ["category", "action", "label", "timestamp", "session"];
+  const missing = required.filter((field) => !payload[field]);
+
+  if (missing.length > 0) {
+    throw new Error(`Missing required fields: ${missing.join(", ")}`);
+  }
+
+  return true;
 }

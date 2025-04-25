@@ -10,7 +10,7 @@ import {
   cancelNavigation,
 } from "../navigation/navigation.js";
 import { mapInstance } from "../main.js"; // Importa a instância do mapa
-import { hidePopup } from "../map/uiMap.js"; // Importa a função hidePopup
+import { hidePopup, markers } from "../map/uiMap.js"; // Importa a função hidePopup
 
 /* O que esse módulo cobre:
 Inicializa o mapa OpenStreetMap com Leaflet.
@@ -20,10 +20,10 @@ Remove marcadores e rotas anteriores para manter o mapa limpo.
 Adiciona controle de geolocalização para o usuário encontrar sua localização no mapa.
 */
 
-const apiKey = "5b3ce3597851110001cf62480e27ce5b5dcf4e75a9813468e027d0d3";
+export const apiKey =
+  "5b3ce3597851110001cf62480e27ce5b5dcf4e75a9813468e027d0d3";
 
 // Variáveis de controle de mapa e marcadores
-export let markers = []; // Array global para armazenar os marcadores no mapa
 export let userLocation = null;
 
 /**
@@ -53,192 +53,6 @@ export function initializeMap(containerId) {
 
   console.log("[initializeMap] Mapa inicializado com sucesso.");
   return mapInstance;
-}
-
-/**
- * Limpa todos os marcadores e rotas existentes no mapa.
- */
-export function clearMarkers() {
-  if (!mapInstance) {
-    console.error("[clearMarkers] mapInstance não está inicializado.");
-    return;
-  }
-
-  markers.forEach((marker) => {
-    if (
-      marker !== selectedDestination.marker &&
-      marker.options?.title !== "Sua localização"
-    ) {
-      mapInstance.removeLayer(marker); // Remove o marcador do mapa
-    }
-  });
-
-  // Atualiza o array de marcadores para conter apenas o marcador do destino
-  markers = markers.filter(
-    (marker) =>
-      marker === selectedDestination.marker ||
-      marker.options?.title === "Sua localização"
-  );
-
-  console.log(
-    "[clearMarkers] Marcadores antigos removidos, exceto o destino e a localização do usuário."
-  );
-}
-
-/**
- * Mostra uma localização no mapa com base no nome do local e coordenadas.
- * @param {string} locationName - Nome descritivo (ex: 'Praia do Encanto')
- * @param {number} lat - Latitude da localização
- * @param {number} lon - Longitude da localização
- */
-export function showLocationOnMap(locationName, lat, lon) {
-  if (!mapInstance) {
-    console.error("[showLocationOnMap] mapInstance não está inicializado.");
-    return;
-  }
-
-  clearMarkers();
-
-  if (!lat || !lon) {
-    console.warn(
-      "[showLocationOnMap] Coordenadas inválidas para a localização:",
-      locationName
-    );
-    return;
-  }
-
-  try {
-    const icon = getMarkerIconForLocation(locationName.toLowerCase());
-    if (!icon) {
-      console.error(
-        "[showLocationOnMap] Nenhum ícone válido encontrado para a localização:",
-        locationName
-      );
-      return;
-    }
-
-    const marker = window.L.marker([lat, lon], { icon }).addTo(mapInstance);
-    marker.bindPopup(createPopupContent(locationName)).openPopup();
-    markers.push(marker);
-
-    mapInstance.flyTo([lat, lon], 16, { animate: true, duration: 1.5 });
-  } catch (error) {
-    console.error("[showLocationOnMap] Erro ao adicionar marcador:", error);
-  }
-}
-
-/**
- * Exibe todos os marcadores de uma categoria no mapa.
- * @param {Array} locations - Lista de locais com nome, latitude e longitude.
- */
-export function showAllLocationsOnMap(locations) {
-  clearMarkers();
-
-  if (!locations || locations.length === 0) {
-    console.warn("Nenhuma localização encontrada para exibir.");
-    return;
-  }
-
-  const bounds = window.L.latLngBounds();
-
-  locations.forEach((location) => {
-    const { name, lat, lon } = location;
-
-    // Verifica se as coordenadas coincidem com a localização do usuário
-    if (
-      userLocation &&
-      lat === userLocation.latitude &&
-      lon === userLocation.longitude
-    ) {
-      console.warn(
-        `[showAllLocationsOnMap] Ignorando local com coordenadas da localização do usuário: ${name}`
-      );
-      return;
-    }
-
-    const icon = getMarkerIconForLocation(name.toLowerCase());
-    const marker = window.L.marker([lat, lon], { icon }).addTo(mapInstance);
-    marker.bindPopup(createPopupContent(name));
-    markers.push(marker);
-
-    bounds.extend([lat, lon]);
-  });
-
-  mapInstance.fitBounds(bounds); // Ajusta o mapa para mostrar todos os marcadores
-}
-
-/**
- * Seleciona o ícone apropriado com base no tipo de localização usando Font Awesome.
- * @param {string} name - Nome do local.
- * @returns {Object} Configuração do ícone.
- */
-function getMarkerIconForLocation(name) {
-  let iconClass = "fa-map-marker-alt"; // Ícone padrão
-
-  if (name.includes("praia")) {
-    iconClass = "fa-umbrella-beach";
-  } else if (name.includes("restaurante") || name.includes("sabores")) {
-    iconClass = "fa-utensils";
-  } else if (
-    name.includes("pousada") ||
-    name.includes("hotel") ||
-    name.includes("vila")
-  ) {
-    iconClass = "fa-bed";
-  } else if (name.includes("atração") || name.includes("farol")) {
-    iconClass = "fa-mountain";
-  } else if (name.includes("loja") || name.includes("mercado")) {
-    iconClass = "fa-shopping-bag";
-  } else if (name.includes("hospital") || name.includes("polícia")) {
-    iconClass = "fa-ambulance";
-  }
-
-  // Retorna um ícone do Leaflet com Font Awesome
-  return window.L.divIcon({
-    html: `<i class="fas ${iconClass}" style="font-size: 24px; color: #3b82f6;"></i>`,
-    className: "custom-marker-icon",
-    iconSize: [24, 24],
-    iconAnchor: [12, 24],
-    popupAnchor: [0, -24],
-  });
-}
-
-/**
- * Cria conteúdo HTML personalizado para os popups
- */
-/**
- * Creates the HTML content for a popup.
- * @param {string} name - The name of the location.
- * @returns {string} - The HTML string for the popup content.
- */
-function createPopupContent(name) {
-  return `<div class="custom-popup">
-    <h3>${name}</h3>
-    <p>${getLocationDescription(name.toLowerCase())}</p>
-    <div class="popup-buttons">
-      <button class="popup-button" onclick="window.navigateTo('${name.toLowerCase()}')">Mais detalhes</button>
-      <button class="popup-button" onclick="startCarousel('${name}')">Fotos</button>
-      <button class="popup-button" onclick="showRoute('${name}')">Como Chegar</button>
-    </div>
-  </div>`;
-}
-
-/**
- * Retorna uma descrição curta para a localização
- */
-function getLocationDescription(key) {
-  const descriptions = {
-    "segunda praia": "A mais movimentada e cheia de quiosques.",
-    "terceira praia": "Mais tranquila, com águas calmas.",
-    "quarta praia": "Extensa e com menos estrutura, perfeita para caminhadas.",
-    "praia do encanto": "Paraíso isolado com águas cristalinas.",
-    // Adicione mais descrições conforme necessário
-  };
-
-  return (
-    descriptions[key] ||
-    "Um local incrível para conhecer em Morro de São Paulo."
-  );
 }
 
 /**
@@ -475,13 +289,8 @@ export async function getCurrentPosition() {
 }
 
 /**
+ * plotRouteOnMap
  * Consulta a API OpenRouteService, obtém as coordenadas e plota a rota no mapa.
- * @param {number} startLat - Latitude de partida.
- * @param {number} startLon - Longitude de partida.
- * @param {number} destLat - Latitude do destino.
- * @param {number} destLon - Longitude do destino.
- * @param {string} [profile="foot-walking"] - Perfil de navegação.
- * @returns {Promise<{ distance: number, duration: number, instructions: Array } | null>}}
  */
 async function plotRouteOnMap(
   startLat,
@@ -490,55 +299,128 @@ async function plotRouteOnMap(
   destLon,
   profile = "foot-walking"
 ) {
-  if (!mapInstance) {
-    console.error("[plotRouteOnMap] mapInstance não está inicializado.");
-    return null;
-  }
-
-  const url = `https://api.openrouteservice.org/v2/directions/${profile}?api_key=${apiKey}&start=${startLon},${startLat}&end=${destLon},${destLat}&instructions=true`;
+  const url = "https://api.openrouteservice.org/v2/directions/" + profile;
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: apiKey,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        coordinates: [
+          [startLon, startLat],
+          [destLon, destLat],
+        ],
+        instructions: true,
+      }),
+    });
+
     if (!response.ok) {
-      console.error("[plotRouteOnMap] Erro ao obter rota:", response.status);
-      return null;
+      throw new Error(`API error: ${response.status}`);
     }
 
     const data = await response.json();
     const coords = data.features[0].geometry.coordinates;
     const latLngs = coords.map(([lon, lat]) => [lat, lon]);
 
+    // Remove rota anterior se existir
     if (window.currentRoute) {
       mapInstance.removeLayer(window.currentRoute);
     }
 
+    // Adiciona nova rota
     window.currentRoute = L.polyline(latLngs, {
       color: "blue",
       weight: 5,
     }).addTo(mapInstance);
+
+    // Ajusta visualização
     mapInstance.fitBounds(window.currentRoute.getBounds(), {
       padding: [50, 50],
     });
 
-    console.log("[plotRouteOnMap] Rota plotada com sucesso.");
-
-    const steps = data.features[0].properties.segments[0].steps;
-    const instructions = steps.map((step) => ({
-      text: step.instruction,
-      latitude: step.way_points[0][1],
-      longitude: step.way_points[0][0],
-      distance: step.distance,
-      duration: step.duration,
-      maneuver: step.maneuver,
-    }));
+    console.log("[plotRouteOnMap] Rota plotada com sucesso");
 
     return {
       distance: data.features[0].properties.segments[0].distance,
       duration: data.features[0].properties.segments[0].duration,
-      instructions,
+      instructions: data.features[0].properties.segments[0].steps,
     };
   } catch (error) {
-    console.error("[plotRouteOnMap] Erro ao plotar rota:", error);
-    return null;
+    console.warn(
+      "[plotRouteOnMap] Usando rota simplificada devido a erro:",
+      error
+    );
+
+    // Fallback: Criar rota em linha reta
+    return createSimpleRoute(startLat, startLon, destLat, destLon);
   }
+}
+
+/**
+ * Cria uma rota simplificada em linha reta quando a API falha
+ */
+function createSimpleRoute(startLat, startLon, destLat, destLon) {
+  // Remove rota anterior
+  if (window.currentRoute) {
+    mapInstance.removeLayer(window.currentRoute);
+  }
+
+  // Cria linha reta entre pontos
+  const latLngs = [
+    [startLat, startLon],
+    [destLat, destLon],
+  ];
+
+  // Adiciona linha pontilhada para indicar rota aproximada
+  window.currentRoute = L.polyline(latLngs, {
+    color: "gray",
+    weight: 3,
+    dashArray: "5,10",
+  }).addTo(mapInstance);
+
+  // Ajusta visualização
+  mapInstance.fitBounds(window.currentRoute.getBounds(), { padding: [50, 50] });
+
+  // Calcula distância aproximada usando fórmula de Haversine
+  const distance = calculateDistance(startLat, startLon, destLat, destLon);
+
+  // Estima duração baseado em velocidade média de caminhada (5 km/h)
+  const duration = (distance / 5) * 3600; // Converte para segundos
+
+  return {
+    distance: distance * 1000, // Converte km para metros
+    duration: duration,
+    instructions: [
+      {
+        text: "Siga em direção ao destino",
+        distance: distance * 1000,
+        duration: duration,
+      },
+    ],
+  };
+}
+
+/**
+ * Calcula distância entre dois pontos usando fórmula de Haversine
+ */
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Raio da Terra em km
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) *
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function toRad(degrees) {
+  return degrees * (Math.PI / 180);
 }

@@ -6,16 +6,12 @@ Renderiza dinamicamente os itens de submenu.
 Adiciona eventos de clique que mostram o local no mapa via showLocationOnMap().*/
 
 import { fetchOSMData } from "../map/osm-service.js";
-import {
-  showLocationOnMap,
-  showAllLocationsOnMap,
-} from "../map/map-controls.js";
+import { showLocationOnMap, showAllLocationsOnMap } from "../map/uiMap.js";
 import { queries } from "../map/osm-service.js";
-import { startCarousel } from "../navigation/carousel.js";
 
 let submenuData = {};
 let selectedFeature = null;
-let selectedDestination = { lat: null, lon: null, name: null };
+export let selectedDestination = { lat: null, lon: null, name: null };
 
 /**
  * Cria botões dinâmicos para cada query no submenu.

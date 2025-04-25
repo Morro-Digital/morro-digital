@@ -1,9 +1,6 @@
 // dialog.js – Processamento de entrada do usuário e definição de respostas
 
-import {
-  showLocationOnMap,
-  showAllLocationsOnMap,
-} from "../map/map-controls.js";
+import { showLocationOnMap, showAllLocationsOnMap } from "../map/uiMap.js";
 import { intents } from "../assistant/intent-manager.js";
 import { translations } from "../../i18n/translations.js";
 import { conversationState } from "../assistant/assistant.js";
